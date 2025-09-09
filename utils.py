@@ -5,9 +5,20 @@ from config import CONFIG_SALTOS
 
 
 def adaptar_csv_biblioteca(df_original):
-    """
-    Pega um DataFrame bruto e o limpa, formata e adapta para o nosso sistema,
-    utilizando funções auxiliares como `extrair_chave_camelot`.
+    """Adapta um DataFrame de biblioteca musical para o formato padrão do sistema.
+
+    Esta função realiza as seguintes operações:
+    1. Renomeia as colunas essenciais ('Título', 'Artista', 'BPM', 'Nota').
+    2. Seleciona apenas as colunas necessárias para o algoritmo.
+    3. Extrai a notação Camelot da coluna de chave.
+    4. Converte a coluna BPM para um tipo numérico inteiro.
+    5. Remove linhas que contenham valores nulos nas colunas essenciais.
+
+    Args:
+        df_original (pd.DataFrame): O DataFrame bruto carregado do CSV.
+
+    Returns:
+        pd.DataFrame: O DataFrame limpo e formatado, pronto para ser usado.
     """
     print("--- INICIANDO ADAPTAÇÃO DO CSV ---")
     df = df_original.copy()
@@ -45,10 +56,18 @@ def adaptar_csv_biblioteca(df_original):
     return df
 
 def calculate_bpm_score(bpm1, bpm2, bpm_tolerancia=5):
-    """
-    Calcula um score de compatibilidade de BPM de 0.0 a 1.0.
-    Quanto mais próximos os BPMs, maior o score.
-    A tolerância define a faixa onde a compatibilidade é maior que zero.
+    """Calcula um score de compatibilidade de BPM de 0.0 a 1.0.
+
+    O score é 1.0 para BPMs idênticos e decai linearmente até 0.0 no limite
+    da tolerância.
+
+    Args:
+        bpm1 (float): O BPM da primeira música.
+        bpm2 (float): O BPM da segunda música.
+        bpm_tolerancia (int): A diferença máxima de BPM permitida.
+
+    Returns:
+        float: O score de compatibilidade de BPM entre 0.0 e 1.0.
     """
     # Se algum dos BPMs for inválido, a compatibilidade é zero.
     if pd.isna(bpm1) or pd.isna(bpm2):
@@ -65,8 +84,15 @@ def calculate_bpm_score(bpm1, bpm2, bpm_tolerancia=5):
     return score
 
 def parse_key(key_str):
-    """Analisa uma string de chave Camelot e a 
-    decompõe em número e letra."""
+    """Analisa uma string de chave Camelot e a decompõe em número e letra.
+
+    Args:
+        key_str (str): A string da chave a ser analisada (ex: "8A", "12B").
+
+    Returns:
+        tuple[int, str] or tuple[None, None]: Uma tupla contendo o número e a letra,
+                                              ou (None, None) se a chave for inválida.
+    """
     if not isinstance(key_str, str) or len(key_str) < 2: return None, None
     try:
       numero = int(key_str[:-1])
@@ -77,10 +103,15 @@ def parse_key(key_str):
       return None, None
 
 def calculate_key_score_programmatic(jump, flip):
-  """
-  Calcula o score de uma transição 
-  de chave (0.0 a 1.0) baseado em regras.
-  """
+  """Calcula o score de uma transição de chave (0.0 a 1.0) baseado em regras.
+
+    Args:
+        jump (int): O salto numérico (0 a 11) na Roda de Camelot.
+        flip (bool): True se houve mudança de modo (Maior <-> Menor).
+
+    Returns:
+        float: O score de compatibilidade harmônica.
+    """
   distancia_salto = min(jump, 12-jump)
   penalidade_salto = (distancia_salto ** 1.5) * 0.05
 
@@ -93,8 +124,15 @@ def calculate_key_score_programmatic(jump, flip):
   return max(0, score_final)
 
 def analisar_transicao_com_vibe(key1, key2):
-    """
-    Analisa a transição entre duas chaves, gera o nome "Vibe" e calcula o score.
+    """Analisa a transição entre duas chaves, gera um nome e calcula o score.
+
+    Args:
+        key1 (str): A chave da música de origem.
+        key2 (str): A chave da música de destino.
+
+    Returns:
+        dict: Um dicionário contendo a análise completa da transição, incluindo
+              'nome_funcao', 'score_key', 'icon', e 'efeito_base'.
     """
     num1, letra1 = parse_key(key1)
     num2, letra2 = parse_key(key2)
@@ -132,10 +170,20 @@ def analisar_transicao_com_vibe(key1, key2):
         'efeito_base': base_info['efeito']
     }
 
-def calcular_vibe_v2(df, pesos={'bpm': 0.7, 'key': 0.3}): # <-- NOVO PARÂMETRO 'pesos'
-  """
-  Versão 2: Recebe um DataFrame de músicas e os pesos para o cálculo da 'vibe'.
-  """
+def calcular_vibe(df, pesos={'bpm': 0.7, 'key': 0.3}): 
+  """Calcula uma métrica de 'vibe' (energia) para cada música no DataFrame.
+
+    A vibe é uma média ponderada da energia rítmica (BPM normalizado) e da
+    energia harmônica (fator da chave Maior/Menor).
+
+    Args:
+        df (pd.DataFrame): O DataFrame de músicas limpo.
+        pesos (dict): Um dicionário com os pesos para 'bpm' and 'key'.
+                      A soma dos pesos deve ser 1.0.
+
+    Returns:
+        pd.DataFrame: O DataFrame original com uma nova coluna 'vibe'.
+    """
   print(f"Calculando 'vibe' com os pesos: {pesos}")
   df_temp = df.copy()
   # Etapa 1: Normalizar BPM
@@ -181,10 +229,18 @@ def calculate_energy_curve_bonus(vibe_candidata, segmento_alvo):
     return max(-0.5, penalidade)
 
 def calculate_final_score(musica_anterior, candidata, pesos={'bpm': 0.7, 'key': 0.3}, bpm_tolerancia=5):
-  """
-  Calcula o score final de uma transição combinando BPM e Chave.
-  Retorna um dicionário com todas as informações relevantes da candidata.
-  """
+  """Calcula o score final ponderado de uma transição combinando BPM e Chave.
+
+    Args:
+        musica_anterior (dict): Dicionário da música de origem.
+        candidata (dict): Dicionário da música de destino.
+        pesos (dict): Dicionário com pesos para 'bpm' e 'key'.
+        bpm_tolerancia (int): Tolerância de BPM a ser usada no cálculo.
+
+    Returns:
+        dict: Dicionário contendo a música candidata, seu 'score_final' e
+              a análise completa da transição.
+    """
   score_bpm = calculate_bpm_score(musica_anterior['bpm'], candidata['bpm'], bpm_tolerancia)
   analise_key = analisar_transicao_com_vibe(musica_anterior['key'], candidata['key'])
   score_key = analise_key['score_key']
@@ -197,11 +253,34 @@ def calculate_final_score(musica_anterior, candidata, pesos={'bpm': 0.7, 'key': 
       'analise_transicao': analise_key
   }
 
-def criar_dj_set_v4(biblioteca, tamanho_set, curva_energia_str, musica_inicial_nome=None, bpm_tolerancia=8, pesos={'bpm': 0.6, 'key': 0.4}):
-  """
-  Gera um set seguindo uma curva de energia e retorna as
-  as colunas de análise.
-  """
+def criar_dj_set(biblioteca, tamanho_set, curva_energia_str, musica_inicial_nome=None, bpm_tolerancia=8, pesos={'bpm': 0.6, 'key': 0.4}):
+  """Gera um DJ set estratégico que tenta seguir uma curva de energia (vibe).
+
+    Esta versão do algoritmo funciona como um "diretor de cena". Ela divide o set
+    em segmentos baseados na `curva_energia_str` e, para cada música a ser escolhida,
+    aplica um bônus ou penalidade às candidatas com base em quão bem a 'vibe' delas
+    se alinha com a 'vibe' alvo do segmento atual. A seleção final ainda é
+    baseada no maior score combinado (BPM, Chave e Bônus de Curva).
+
+    Args:
+        biblioteca (pd.DataFrame): O DataFrame completo e limpo de músicas.
+        tamanho_set (int): O número de músicas desejado no set final.
+        curva_energia_str (str): A string que define a jornada de vibe, separada
+                                 por hífens (ex: "mid-up-up-down").
+        musica_inicial_nome (str, optional): Título da música para forçar o início
+                                             do set. Se None, o algoritmo escolhe
+                                             a melhor para o primeiro segmento.
+                                             Defaults to None.
+        bpm_tolerancia (int, optional): A tolerância máxima de BPM para uma transição
+                                        ser considerada. Defaults to 8.
+        pesos (dict, optional): Dicionário com os pesos para 'bpm' e 'key' no
+                                cálculo do score. Defaults to {'bpm': 0.6, 'key': 0.4}.
+
+    Returns:
+        pd.DataFrame: Um DataFrame contendo o set gerado, com colunas detalhadas
+                      de análise para cada transição. Retorna um DataFrame vazio
+                      se a geração falhar.
+    """
   print("="*50)
   print(f"INICIANDO GERAÇÃO DE SET V4 - CURVA: {curva_energia_str}")
   print("="*50)
@@ -275,9 +354,13 @@ def criar_dj_set_v4(biblioteca, tamanho_set, curva_energia_str, musica_inicial_n
 
 
 def plotar_curva_de_vibe(df_set):
-    """
-    Recebe um DataFrame de um set gerado e plota um gráfico interativo
-    da curva de 'vibe' ao longo do tempo.
+    """Gera um gráfico interativo da curva de vibe de um set.
+
+    Args:
+        df_set (pd.DataFrame): O DataFrame do set gerado.
+
+    Returns:
+        plotly.graph_objects.Figure: O objeto da figura do Plotly, pronto para ser renderizado.
     """
     # Validação: Garante que o DataFrame não está vazio e tem a coluna 'vibe'
     if df_set.empty or 'vibe' not in df_set.columns:
