@@ -34,22 +34,25 @@ if 'biblioteca_limpa' not in st.session_state:
 # --- LÓGICA DE PROCESSAMENTO COM ESTADO ---
 # Se um novo arquivo foi enviado, nós o processamos e guardamos na "gaveta".
 if uploaded_file is not None:
-    # `st.spinner` mostra uma mensagem de "carregando" enquanto o bloco é executado.
-    with st.spinner('Processando e limpando sua biblioteca...'):
-        try:
-            # Usamos latin-1 como fallback, que é comum em CSVs do Windows.
+    try:
+        # `st.spinner` mostra uma mensagem de "carregando" enquanto o bloco é executado.
+        with st.spinner('Processando e limpando sua biblioteca...'):
+            # Lê o CSV enviado pelo usuário
             df_real = pd.read_csv(uploaded_file, encoding='utf-8')
             # CHAMANDO SUA FUNÇÃO DO utils.py!
             st.session_state.biblioteca_limpa = adaptar_csv_biblioteca(df_real)
-            st.sidebar.success(f"{len(st.session_state.biblioteca_limpa)} músicas carregadas com sucesso!")
-        except Exception as e:
-            st.sidebar.error(f"Erro ao processar o arquivo: {e}")
-            st.session_state.biblioteca_limpa = None # Reseta em caso de erro
+        
+        st.sidebar.success(f"Biblioteca carregada! {len(st.session_state.biblioteca_limpa)} músicas carregadas com sucesso!")
+
+    except Exception as e:
+        st.sidebar.error(f"Erro ao processar o arquivo: {e}")
+        st.session_state.biblioteca_limpa = None # Reseta em caso de erro
 
 # --- LÓGICA DE EXIBIÇÃO ---
 # Agora, em vez de checar o `uploaded_file`, checamos nossa "gaveta".
 if st.session_state.biblioteca_limpa is not None:
+    df_limpo = st.session_state.biblioteca_limpa
     st.header("Sua Biblioteca (Limpa e Formatada)")
-    st.dataframe(st.session_state.biblioteca_limpa)
+    st.dataframe(df_limpo)
 else:
     st.info("Aguardando o upload do seu arquivo CSV na barra lateral para começar.")
