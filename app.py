@@ -69,11 +69,11 @@ if uploaded_file is not None:
         st.sidebar.error(f"Erro ao processar o arquivo: {e}")
         st.session_state.biblioteca_limpa = None # Reseta em caso de erro
 
-# --- LÓGICA DE EXIBIÇÃO DOS CONTROLES---
+# --- LÓGICA DE EXIBIÇÃO DOS CONTROLES NA SIDEBAR---
 # Agora, em vez de checar o `uploaded_file`, checamos `st.session_state`
 if st.session_state.biblioteca_limpa is not None:
     df_limpo = st.session_state.biblioteca_limpa
-    # --- INÍCIO DOS CONTROLES DE AJUSTE ---
+
     st.sidebar.subheader("2. Configuração do Set")
     # Selectbox para a música inicial. As opções são preenchidas dinamicamente!
     lista_musicas = ["Automático"] + df_limpo['title'].tolist()
@@ -94,10 +94,36 @@ if st.session_state.biblioteca_limpa is not None:
     # st.sidebar.markdown(f"**Foco em Mixagem Harmônica:** `{peso_key:.2f}`")
 
     criar_set_btn = st.sidebar.button("▶️ Criar meu Set Inteligente!")
+ # --- FIM DOS CONTROLES NA SIDEBAR ---
+ # Se o botão "Criar meu Set Inteligente!" for pressionado
+    if criar_set_btn:
+        with st.spinner('Criando seu DJ SET personalizado...'):
+            musica_inicial_final = None if musica_inicial == "Automático" else musica_inicial
+            df_set_gerado = criar_dj_set(
+                biblioteca=df_limpo,
+                tamanho_set=int(tamanho_set),
+                curva_energia_str=curva_str,
+                musica_inicial_nome=musica_inicial_final,
+                bpm_tolerancia=int(bpm_tolerancia),
+                pesos={'bpm': peso_bpm, 'key': peso_key}
+            )
+            st.session_state.df_set_gerado = df_set_gerado
 
-    # --- FIM DOS CONTROLES DE AJUSTE ---
-    st.subheader("Sua Biblioteca (Limpa e Formatada)")
-    st.dataframe(df_limpo)
+    if st.session_state.df_set_gerado is not None:
+        df_set = st.session_state.df_set_gerado
+
+        if not df_set.empty:
+            st.success("✅ DJ Set criado com sucesso!")
+            st.subheader("📊 Análise Visual do Set")
+            fig = plotar_curva_de_vibe(df_set)
+            st.plotly_chart(fig, use_container_width=True)
+            st.subheader("🎶 Seu DJ Set Personalizado")
+            st.dataframe(df_set)
+        else:
+            st.error("❌ Não foi possível criar um set com os parâmetros fornecidos. Tente ajuste as configurações.")
+    else:
+        st.subheader("Sua Biblioteca (Limpa e Formatada)")
+        st.dataframe(df_limpo)
 else:
     st.info("Aguardando o upload do seu arquivo CSV na barra lateral para começar.")
 

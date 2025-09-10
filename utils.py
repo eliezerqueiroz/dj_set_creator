@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 import plotly.graph_objects as go
-from config import CONFIG_SALTOS
+from config import (CONFIG_SALTOS, VIBE_SEGMENTS, DEFAULT_PESOS)
 
 
 def adaptar_csv_biblioteca(df_original):
@@ -298,7 +298,7 @@ def criar_dj_set(biblioteca, tamanho_set, curva_energia_str, musica_inicial_nome
   print("="*50)
 
   # 1. PREPARAÇÃO
-  biblioteca_com_vibe = calcular_vibe_v2(biblioteca, pesos=pesos)
+  biblioteca_com_vibe = calcular_vibe(biblioteca, pesos=pesos)
   setlist = []
   musicas_disponiveis = biblioteca_com_vibe.copy().set_index('title', drop=False)
   curva_energia_lista = curva_energia_str.split('-')
