@@ -8,7 +8,7 @@ def adaptar_csv_biblioteca(df_original):
     """Adapta um DataFrame de biblioteca musical para o formato padrão do sistema.
 
     Esta função realiza as seguintes operações:
-    1. Renomeia as colunas essenciais ('Título', 'Artista', 'BPM', 'Nota').
+    1. Renomeia as colunas essenciais ('título', 'artista', 'bpm', 'nota').
     2. Seleciona apenas as colunas necessárias para o algoritmo.
     3. Extrai a notação Camelot da coluna de chave.
     4. Converte a coluna BPM para um tipo numérico inteiro.
@@ -20,19 +20,31 @@ def adaptar_csv_biblioteca(df_original):
     Returns:
         pd.DataFrame: O DataFrame limpo e formatado, pronto para ser usado.
     """
-    print("--- INICIANDO ADAPTAÇÃO DO CSV ---")
+    # 1. LIMPEZA DOS NOMES DAS COLUNAS
+    # Remove caracteres invisíveis (como o BOM), espaços em branco
+    # e converte para minúsculas para uma correspondência mais flexível.
     df = df_original.copy()
-    # 1. Renomear as colunas importantes
+    df.columns = df.columns.str.lower().str.strip().str.replace('\ufeff', '', regex=False)
+
+    # 2. MAPEAMENTO FLEXÍVEL
+    # Agora o mapeamento usa nomes em minúsculas
     mapeamento_colunas = {
-        'Título': 'title',
-        'Artista': 'artist',
-        'BPM': 'bpm',
-        'Nota': 'key'
+        'título': 'title', # "Título" se torna "título"
+        'artista': 'artist',
+        'bpm': 'bpm',
+        'nota': 'key'
     }
     df.rename(columns=mapeamento_colunas, inplace=True)
-    # 2. Selecionar apenas as colunas que nos interessam para evitar ruído
+    # --- FIM DA CORREÇÃO ---
+
+    # 3. Seleção de colunas (lógica inalterada, mas agora funciona)
     colunas_desejadas = ['title', 'artist', 'bpm', 'key']
     colunas_para_manter = [col for col in colunas_desejadas if col in df.columns]
+    
+    # Validação importante: Se colunas essenciais não foram encontradas APÓS a limpeza.
+    if 'title' not in colunas_para_manter or 'artist' not in colunas_para_manter:
+        raise KeyError("Não foi possível encontrar as colunas 'Título' ou 'Artista' no seu CSV. Por favor, verifique o arquivo.")
+        
     df = df[colunas_para_manter]
     print(f"Colunas selecionadas: {colunas_para_manter}")
     # 3. Limpeza e Formatação de Dados

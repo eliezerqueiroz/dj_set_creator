@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
+import io
 from utils import (
     adaptar_csv_biblioteca,
-    criar_dj_set_v4,
+    criar_dj_set,
     plotar_curva_de_vibe
 )
 
@@ -44,25 +45,26 @@ if uploaded_file is not None:
     try:
         # `st.spinner` mostra uma mensagem de "carregando" enquanto o bloco é executado.
         with st.spinner('Processando e limpando sua biblioteca...'):
-            # Para ler o arquivo de forma flexível, precisamos "rebobinar" o cursor do arquivo
-            # se a primeira tentativa de leitura falhar.
-            uploaded_file.seek(0)
+            df_real = None
+            # Precisamos ler os bytes para poder "rebobinar" o arquivo
+            file_bytes = uploaded_file.getvalue()
+            
             try:
-                # TENTATIVA 1: Tenta ler com UTF-8, o padrão mais moderno.
-                st.write("Tentando ler o arquivo com encoding UTF-8...")
-                df_real = pd.read_csv(uploaded_file, encoding='utf-8')
-            except UnicodeDecodeError:
-                # TENTATIVA 2 (FALLBACK): Se o UTF-8 falhar, rebobina o arquivo e tenta com latin-1.
-                st.write("UTF-8 falhou. Tentando com encoding latin-1...")
-                uploaded_file.seek(0)
-                df_real = pd.read_csv(uploaded_file, encoding='latin-1')
+                # Tentativa 1: Tenta ler com UTF-8, o padrão mais moderno
+                df_real = pd.read_csv(io.BytesIO(file_bytes), encoding='utf-8')
+            except (UnicodeDecodeError, KeyError):
+                # Tentativa 2 (FALLBACK): Se UTF-8 falhar, tenta com latin-1
+                df_real = pd.read_csv(io.BytesIO(file_bytes), encoding='latin-1')
+
+            if df_real is None:
+                raise ValueError("Não foi possível ler o arquivo CSV com os encodings suportados.")
             
             # Processa e limpa a biblioteca usando a função do utils.py
             st.session_state.biblioteca_limpa = adaptar_csv_biblioteca(df_real)
         
         st.sidebar.success(f"Biblioteca carregada! {len(st.session_state.biblioteca_limpa)} músicas encontradas.")
         st.session_state.df_set_gerado = None # Reseta o set gerado ao carregar uma nova biblioteca
-        
+
     except Exception as e:
         st.sidebar.error(f"Erro ao processar o arquivo: {e}")
         st.session_state.biblioteca_limpa = None # Reseta em caso de erro
