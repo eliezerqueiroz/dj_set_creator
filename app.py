@@ -18,11 +18,11 @@ st.set_page_config(
 
 # --- CABEÇALHO PRINCIPAL ---
 # st.title() cria um texto grande, como um <h1> em HTML.
-st.title("🎧 DJ Set Creator Inteligente")
+st.title("🎧 DJ Set Creator")
 # st.markdown() permite escrever em formato Markdown, ótimo para textos com formatação.
-st.markdown("1. Acesso o Painel de Controles na barra lateral")
-st.markdown("2. Faça upload das suas musicas")
-st.markdown("3. E veja o poder da `Ciência de dados` criar um set 100% harmônico!")
+st.markdown("1. ⏪️ Acesse o Painel de Controles na barra lateral")
+st.markdown("2. 🆙 Faça upload das suas musicas")
+st.markdown("3. Configure e crie um DJ SET, com o poder da `Ciência de dados` 🦾🎲")
 
 # --- BARRA LATERAL (FORMULÁRIO DE CONTROLES) ---
 st.sidebar.title("⚙️ Painel de Controles do Set")
@@ -93,7 +93,7 @@ if st.session_state.biblioteca_limpa is not None:
     st.sidebar.slider("Mixagem Harmônica (prioriza KEYs iguais)", value=peso_key, disabled=True, width=340)
     # st.sidebar.markdown(f"**Foco em Mixagem Harmônica:** `{peso_key:.2f}`")
 
-    criar_set_btn = st.sidebar.button("▶️ Criar meu Set Inteligente!")
+    criar_set_btn = st.sidebar.button("▶️ Criar Set!", width="stretch")
  # --- FIM DOS CONTROLES NA SIDEBAR ---
  # Se o botão "Criar meu Set Inteligente!" for pressionado
     if criar_set_btn:
