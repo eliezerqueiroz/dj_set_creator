@@ -356,7 +356,7 @@ def criar_dj_set(biblioteca, tamanho_set, curva_energia_str, musica_inicial_nome
       setlist.append(proxima_musica_dict)
       musicas_disponiveis = musicas_disponiveis.drop(proxima_musica_dict['title'])
   # Colunas finais do DataFrame do set
-  colunas_finais = ['title', 'artist', 'bpm', 'key', 'vibe', 'transition_name', 'transition_effect', 'transition_icon', 'transition_score']
+  colunas_finais = ['title', 'artist', 'bpm', 'key', 'localização', 'vibe', 'transition_name', 'transition_effect', 'transition_icon', 'transition_score']
   df_set = pd.DataFrame(setlist)
   # Garantir que as colunas existam para evitar erros
   for col in colunas_finais:

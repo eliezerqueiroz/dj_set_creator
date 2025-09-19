@@ -118,12 +118,12 @@ if st.session_state.biblioteca_limpa is not None:
             fig = plotar_curva_de_vibe(df_set)
             st.plotly_chart(fig, use_container_width=True)
             st.subheader("🎶 Seu DJ Set Personalizado")
-            st.dataframe(df_set)
+            st.dataframe(df_set[['title', 'artist', 'bpm', 'key', 'vibe', 'transition_name', 'transition_effect', 'transition_icon', 'transition_score'] ])
         else:
             st.error("❌ Não foi possível criar um set com os parâmetros fornecidos. Tente ajuste as configurações.")
     else:
         st.subheader("Sua Biblioteca (Limpa e Formatada)")
-        st.dataframe(df_limpo)
+        st.dataframe(df_limpo[['title', 'artist', 'bpm', 'key']])
 else:
     st.info("Aguardando o upload do seu arquivo CSV na barra lateral para começar.")
 
