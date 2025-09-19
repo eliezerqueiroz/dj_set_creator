@@ -95,7 +95,7 @@ if st.session_state.biblioteca_limpa is not None:
 
     criar_set_btn = st.sidebar.button("▶️ Criar Set!", width="stretch")
  # --- FIM DOS CONTROLES NA SIDEBAR ---
- # Se o botão "Criar meu Set Inteligente!" for pressionado
+ # Se o botão "Criar Set!" for pressionado
     if criar_set_btn:
         with st.spinner('Criando seu DJ SET personalizado...'):
             musica_inicial_final = None if musica_inicial == "Automático" else musica_inicial

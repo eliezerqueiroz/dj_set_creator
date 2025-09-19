@@ -32,13 +32,14 @@ def adaptar_csv_biblioteca(df_original):
         'título': 'title', # "Título" se torna "título"
         'artista': 'artist',
         'bpm': 'bpm',
-        'nota': 'key'
+        'nota': 'key',
+        'localização': 'localização'  # Adiciona a coluna de localização para ser possível importar de voltar no MIXXX
     }
     df.rename(columns=mapeamento_colunas, inplace=True)
     # --- FIM DA CORREÇÃO ---
 
     # 3. Seleção de colunas (lógica inalterada, mas agora funciona)
-    colunas_desejadas = ['title', 'artist', 'bpm', 'key']
+    colunas_desejadas = ['title', 'artist', 'bpm', 'key', 'localização']
     colunas_para_manter = [col for col in colunas_desejadas if col in df.columns]
     
     # Validação importante: Se colunas essenciais não foram encontradas APÓS a limpeza.
@@ -59,7 +60,7 @@ def adaptar_csv_biblioteca(df_original):
         # Formatar a coluna 'bpm' com duas casas decimais
         df['bpm'] = df['bpm'].round(0)
     # 4. Validação Final: Remover linhas com dados essenciais faltando
-    colunas_obrigatorias = ['title', 'artist', 'bpm', 'key']
+    colunas_obrigatorias = ['title', 'artist', 'bpm', 'key', 'localização']
     linhas_antes = len(df)
     df.dropna(subset=colunas_obrigatorias, inplace=True)
     linhas_depois = len(df)
