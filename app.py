@@ -5,6 +5,7 @@ from utils import (
     adaptar_csv_biblioteca,
     criar_dj_set,
     plotar_curva_de_vibe
+    # exportar_set_csv
 )
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
@@ -15,6 +16,12 @@ st.set_page_config(
     layout="wide", # Usa a largura total da tela, ótimo para tabelas e gráficos
     initial_sidebar_state="expanded" # Deixa a barra lateral aberta por padrão
 )
+# --- GERENCIAMENTO DE ESTADO ---
+# Inicializamos uma "gaveta" no st.session_state para guardar nossa biblioteca limpa.
+if 'biblioteca_limpa' not in st.session_state:
+    st.session_state.biblioteca_limpa = None
+if 'df_set_gerado' not in st.session_state: # <-- Inicializa o estado do set gerado
+    st.session_state.df_set_gerado = None
 
 # --- CABEÇALHO PRINCIPAL ---
 # st.title() cria um texto grande, como um <h1> em HTML.
@@ -27,18 +34,12 @@ st.markdown("3. Configure e crie um DJ SET, com o poder da `Ciência de dados` �
 # --- BARRA LATERAL (FORMULÁRIO DE CONTROLES) ---
 st.sidebar.title("⚙️ Painel de Controles do Set")
 st.sidebar.subheader("1. Use seu software DJ favorito para exportar sua biblioteca ou playlist como .CSV")
+
+# SEÇÃO 1: PROCESSAMENTO DO UPLOAD (MODIFICA O ESTADO)
 uploaded_file = st.sidebar.file_uploader(
     label="Carregue aqui seu seu arquivo .csv", 
     type=["csv"]
 )
-
-# --- GERENCIAMENTO DE ESTADO ---
-# Inicializamos uma "gaveta" no st.session_state para guardar nossa biblioteca limpa.
-if 'biblioteca_limpa' not in st.session_state:
-    st.session_state.biblioteca_limpa = None
-if 'df_set_gerado' not in st.session_state: # <-- Inicializa o estado do set gerado
-    st.session_state.df_set_gerado = None
-
 # --- LÓGICA DE PROCESSAMENTO COM ESTADO ---
 # Se um novo arquivo foi enviado, nós o processamos e guardamos na "st.session_state".
 if uploaded_file is not None:
@@ -69,8 +70,8 @@ if uploaded_file is not None:
         st.sidebar.error(f"Erro ao processar o arquivo: {e}")
         st.session_state.biblioteca_limpa = None # Reseta em caso de erro
 
-# --- LÓGICA DE EXIBIÇÃO DOS CONTROLES NA SIDEBAR---
-# Agora, em vez de checar o `uploaded_file`, checamos `st.session_state`
+#  SEÇÃO 2: --- LÓGICA DE EXIBIÇÃO DOS CONTROLES NA SIDEBAR E CAPTURA DE PARÂMETROS---
+# Esta seção só aparece se o csv estiver carregado.
 if st.session_state.biblioteca_limpa is not None:
     df_limpo = st.session_state.biblioteca_limpa
 
@@ -93,11 +94,13 @@ if st.session_state.biblioteca_limpa is not None:
     st.sidebar.slider("Mixagem Harmônica (prioriza KEYs iguais)", value=peso_key, disabled=True, width=340)
     # st.sidebar.markdown(f"**Foco em Mixagem Harmônica:** `{peso_key:.2f}`")
 
-    criar_set_btn = st.sidebar.button("▶️ Criar Set!", width="stretch")
+    criar_set_btn = st.sidebar.button("▶️ Criar DJ Set!", width="stretch")
  # --- FIM DOS CONTROLES NA SIDEBAR ---
+
+# SEÇÃO 3: LÓGICA DE AÇÃO (MODIFICA O ESTADO)
  # Se o botão "Criar Set!" for pressionado
     if criar_set_btn:
-        with st.spinner('Criando seu DJ SET personalizado...'):
+        with st.spinner('Criando seu DJ Set personalizado...'):
             musica_inicial_final = None if musica_inicial == "Automático" else musica_inicial
             df_set_gerado = criar_dj_set(
                 biblioteca=df_limpo,
@@ -109,12 +112,35 @@ if st.session_state.biblioteca_limpa is not None:
             )
             st.session_state.df_set_gerado = df_set_gerado
 
+# SEÇÃO 4: DESENHO DOS WIDGETS QUE DEPENDEM DO ESTADO ATUALIZADO            
+# --- INÍCIO DA FEATURE DE DOWNLOAD NA SIDEBAR ---
+    st.sidebar.subheader("4. Exportar Set(.CSV compatível com Mixxx)")
+    # A lógica para habilitar/desabilitar o botão
+    set_foi_gerado = st.session_state.df_set_gerado is not None and not st.session_state.df_set_gerado.empty
+    if set_foi_gerado:
+        # Prepara os dados para o download APENAS se um set já foi gerado
+        df_para_download = st.session_state.df_set_gerado
+        csv_string = df_para_download.to_csv(index=False).encode('utf-8')
+    else:
+        csv_string = "" # Botão desabilitado não precisa de dados
+
+    st.sidebar.download_button(
+       label="📥 Baixar DJ Set",
+       data=csv_string,
+       width="stretch",
+       file_name="meu_set_inteligente.csv",
+       mime="text/csv",
+       disabled=not set_foi_gerado, # O botão fica desabilitado se `set_foi_gerado` for False
+       help="Crie um set para habilitar o download." # Dica que aparece ao passar o mouse
+    )
+# --- FIM DA FEATURE DE DOWNLOAD NA SIDEBAR ---
+# SEÇÃO 5: EXIBIÇÃO NA ÁREA PRINCIPAL
     if st.session_state.df_set_gerado is not None:
         df_set = st.session_state.df_set_gerado
 
         if not df_set.empty:
             st.success("✅ DJ Set criado com sucesso!")
-            st.subheader("📊 Análise Visual do Set")
+            st.subheader("📊 Visualização da Vibe")
             fig = plotar_curva_de_vibe(df_set)
             st.plotly_chart(fig, use_container_width=True)
             st.subheader("🎶 Seu DJ Set Personalizado")
