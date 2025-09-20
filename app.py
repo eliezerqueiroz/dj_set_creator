@@ -5,14 +5,19 @@ from utils import (
     adaptar_csv_biblioteca,
     criar_dj_set,
     plotar_curva_de_vibe
-    # exportar_set_para_mixxx_csv # Garanta que esta função está em utils.py
+    # exportar_set_csv # Garanta que esta função está em utils.py
 )
 
 # --- CONFIGURAÇÃO DA PÁGINA E ESTADO INICIAL ---
 st.set_page_config(
     page_title="DJ Set Creator", 
+    page_icon="🎧",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/eliezerqueiroz/dj_set_creator',
+        'About': "![Eliezer Queiroz](https://avatars.githubusercontent.com/u/60445437?v=4)\n\n Desenvolvido por Eliezer Queiroz: [GitHub]('https://github.com/eliezerqueiroz') | [LinkedIn](https://www.linkedin.com/in/eliezerqueiroz/)"
+    }
 )
 
 # Inicialização do st.session_state no início do script
@@ -74,6 +79,7 @@ with st.sidebar:
         st.success(f"Biblioteca carregada! {len(df_limpo)} músicas encontradas.")
         
         st.header("2. Configure o Set")
+        set_name = st.text_input("Nome do Set (opcional)", value="Meu Set Inteligente", max_chars=50, help="Este nome será usado no arquivo exportado.")
         lista_musicas = ["Automático"] + df_limpo['title'].tolist()
         musica_inicial = st.selectbox("Música Inicial", options=lista_musicas)
         tamanho_set = st.slider("Tamanho do Set (número de músicas)", min_value=5, max_value=100, value=20, step=1, width=340)
@@ -87,7 +93,7 @@ with st.sidebar:
 
         # Botão de Ação para gerar o set
         if st.button("▶️ Criar DJ Set!", width="stretch"):
-            with st.spinner('Criando seu DJ Set personalizado...'):
+            with st.spinner(f'Criando DJ Set {set_name}'):
                 musica_inicial_final = None if musica_inicial == "Automático" else musica_inicial
                 
                 # Executa a lógica principal e atualiza o estado da sessão
@@ -111,9 +117,9 @@ with st.sidebar:
         
         # O botão de download AGORA lê o estado que foi atualizado na mesma execução (se o botão 'Criar' foi clicado)
         st.download_button(
-           label="📥 Baixar DJ Set",
+           label= f"📥 Baixar {set_name}",
            data=st.session_state.csv_para_download,
-           file_name="meu_set_inteligente.csv",
+           file_name=f"{set_name}.csv",
            mime="text/csv",
            disabled=(st.session_state.df_set_gerado is None or st.session_state.df_set_gerado.empty),
            width="stretch",
@@ -126,13 +132,20 @@ with st.sidebar:
 
 # Lógica de Exibição: Mostra o conteúdo apropriado com base no que está no st.session_state
 if st.session_state.df_set_gerado is not None and not st.session_state.df_set_gerado.empty:
-    st.success("✅ DJ Set criado com sucesso!")
+    st.success(f"✅ DJ Set:  **{set_name}**  foi criado com sucesso!")
     
     st.subheader("📊 Visualização da Vibe")
     fig = plotar_curva_de_vibe(st.session_state.df_set_gerado)
-    st.plotly_chart(fig, use_container_width=True)
+    config = {
+        'toImageButtonOptions': {
+        'format': 'png', # one of png, svg, jpeg, webp
+        'filename': set_name,
+        }
+    }
+    fig.update_layout(title={'text': f'<b>Curva de Vibe: {set_name}</b>'})
+    st.plotly_chart(fig, use_container_width=True, config=config)
     
-    st.subheader("🎶 Seu DJ Set Personalizado")
+    st.subheader(f"🎶 Set List: {set_name}")
     st.dataframe(st.session_state.df_set_gerado[['title', 'artist', 'bpm', 'key', 'vibe', 'transition_name', 'transition_effect', 'transition_icon', 'transition_score']])
 
 elif st.session_state.biblioteca_limpa is not None:
