@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import plotly.graph_objects as go
+import plotly.express as px
 from config import (CONFIG_SALTOS, VIBE_SEGMENTS, DEFAULT_PESOS)
 
 
@@ -378,53 +379,48 @@ def plotar_curva_de_vibe(df_set):
     # Validação: Garante que o DataFrame não está vazio e tem a coluna 'vibe'
     if df_set.empty or 'vibe' not in df_set.columns:
         print("DataFrame do set está vazio ou não contém a coluna 'vibe'. Gráfico não pode ser gerado.")
-        return
-    # 1. Prepara os dados para o gráfico
-    # O eixo X será a posição da música (1, 2, 3...)
-    posicao_no_set = list(range(1, len(df_set) + 1))
-    # O eixo Y será a nossa métrica de 'vibe'
-    vibe_scores = df_set['vibe']
-    # Criamos um texto customizado para o 'hover' (quando o usuário passa o mouse)
-    # Isso enriquece muito a visualização!
-    hover_text = [
+        # Retorna uma figura vazia para não quebrar a aplicação
+        return px.line(title="Gere um set para ver a curva de vibe")
+
+    # 1. Prepara os dados (esta parte muda um pouco)
+    # Adicionamos uma coluna de "Posição" ao DataFrame para usar como eixo X.
+    df_plot = df_set.copy()
+    df_plot['Posição'] = range(1, len(df_plot) + 1)
+    
+    # Criamos o texto do hover (mesma lógica de antes)
+    df_plot['hover_text'] = [
         f"<b>{row['title']}</b><br>" +
         f"Artista: {row['artist']}<br>" +
         f"BPM: {row['bpm']:.0f} | Chave: {row['key']}<br>" +
         f"Vibe: {row['vibe']:.2f}<br>" +
         f"Transição: {row['transition_name']} ({row['transition_icon']})"
-        for index, row in df_set.iterrows()
+        for index, row in df_plot.iterrows()
     ]
-    # 2. Cria o objeto do gráfico
-    fig = go.Figure()
-    # 3. Adiciona a linha (o "traço") da curva de vibe
-    fig.add_trace(go.Scatter(
-        x=posicao_no_set,
-        y=vibe_scores,
-        mode='lines+markers',  # Linhas conectando os pontos (marcadores)
-        name='Vibe do Set',
-        text=hover_text,       # Associa nosso texto customizado
-        hoverinfo='text',      # Diz ao Plotly para mostrar APENAS nosso texto
-        line=dict(color='royalblue', width=3, shape='spline'), # Linha suave e azul
-        marker=dict(size=10, color='mediumslateblue')
-    ))
-    # 4. Configura o layout (títulos, eixos, etc.)
+
+    # 2. CRIA O GRÁFICO COM UMA ÚNICA LINHA DE CÓDIGO!
+    fig = px.line(
+        df_plot,
+        x='Posição',
+        y='vibe',
+        title='<b>Curva de Vibe do Set Gerado</b>',
+        markers=True, # Adiciona os pontos/marcadores na linha
+        hover_data={'Posição': False, 'vibe': ':.2f', 'hover_text': True} # Define o que aparece no hover
+    )
+
+    # Personaliza o template do hover para usar nosso texto customizado
+    fig.update_traces(hovertemplate='%{customdata[0]}<extra></extra>', customdata=df_plot[['hover_text']])
+
+    # 3. Configura o layout (muito similar a antes)
     fig.update_layout(
-        title={
-            'text': '<b>Curva de Vibe do Set Gerado</b>',
-            'y':0.9,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'top',
-            'font': {'size': 20}
-        },
         xaxis_title='Posição da Música no Set',
         yaxis_title='Nível de Vibe (0.0 a 1.0)',
-        xaxis=dict(tickmode='linear', dtick=1), # Força o eixo X a mostrar todos os números (1, 2, 3...)
-        yaxis=dict(range=[0, 1]), # Fixa o eixo Y entre 0 e 1 para consistência
-        template='plotly_white', # Fundo branco e limpo
-        height=500
+        xaxis=dict(tickmode='linear', dtick=1),
+        yaxis=dict(range=[0, 1]),
+        template='plotly_white',
+        height=500,
+        title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top', 'font': {'size': 20}}
     )
-    # 5. Mostra o gráfico!
+    
     return fig
 
 def exportar_set_csv(df_set):
