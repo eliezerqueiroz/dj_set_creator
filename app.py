@@ -4,8 +4,8 @@ import io
 from utils import (
     adaptar_csv_biblioteca,
     criar_dj_set,
-    plotar_curva_de_vibe
-    # exportar_set_csv # Garanta que esta função está em utils.py
+    plotar_curva_de_vibe,
+    exportar_set_csv
 )
 
 # --- CONFIGURAÇÃO DA PÁGINA E ESTADO INICIAL ---
@@ -109,7 +109,7 @@ with st.sidebar:
                 
                 # Prepara os dados para download IMEDIATAMENTE e salva no estado
                 if not df_set_gerado.empty:
-                    st.session_state.csv_para_download = df_set_gerado.to_csv(index=False)
+                    st.session_state.csv_para_download = exportar_set_csv(df_set_gerado)
                 else:
                     st.session_state.csv_para_download = ""
 

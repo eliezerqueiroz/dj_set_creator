@@ -427,3 +427,48 @@ def plotar_curva_de_vibe(df_set):
     # 5. Mostra o gráfico!
     return fig
 
+def exportar_set_csv(df_set):
+    """
+    Converte um DataFrame de set gerado para uma string CSV compatível com Mixxx.
+
+    Args:
+        df_set (pd.DataFrame): O DataFrame do set gerado, que deve conter
+                               as colunas 'title', 'artist', 'bpm', 'key',
+                               e 'localização'.
+
+    Returns:
+        str: Uma string contendo os dados formatados como CSV, pronta para
+             ser usada no botão de download do Streamlit.
+    """
+    # PASSO 1: Validação de Segurança
+    # Garante que o DataFrame não está vazio e que a coluna essencial 'localização' existe.
+    if df_set.empty or 'localização' not in df_set.columns:
+        print("AVISO: DataFrame de exportação está vazio ou não contém a coluna 'localização'.")
+        return "" # Retorna uma string vazia para o botão de download
+
+    # PASSO 2: Selecionar apenas as colunas que o Mixxx entende.
+    # Baseado na sua pesquisa, sabemos que estas são as colunas essenciais.
+    colunas_para_exportar = ['title', 'artist', 'bpm', 'key', 'localização']
+    df_export = df_set[colunas_para_exportar].copy()
+
+    # PASSO 3: Renomear as colunas de volta para o padrão do Mixxx.
+    # Este é o "mapeamento reverso" da nossa função de limpeza.
+    mapeamento_reverso = {
+        'title': 'Título',
+        'artist': 'Artista',
+        'bpm': 'BPM',
+        'key': 'Nota',
+        'localização': 'LOCALIZAÇÃO'
+    }
+    df_export.rename(columns=mapeamento_reverso, inplace=True)
+
+    # PASSO 4: Converter o DataFrame para uma string CSV com configurações precisas.
+    # Usamos to_csv para gerar o texto, que será usado pelo botão de download.
+    csv_string = df_export.to_csv(
+        index=False,           # Crucial: Não incluir o índice do pandas no arquivo
+        sep=',',               # Forçar o uso de vírgula como separador
+        quoting=1,             # csv.QUOTE_MINIMAL: Coloca aspas só quando necessário
+        encoding='utf-8-sig'   # O formato mais compatível, lida com BOM
+    )
+    
+    return csv_string
