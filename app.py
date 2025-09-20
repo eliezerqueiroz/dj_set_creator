@@ -81,7 +81,7 @@ with st.sidebar:
         st.header("2. Configure o Set")
         set_name = st.text_input("Nome do Set (opcional)", value="Meu Set Inteligente", max_chars=50, help="Este nome será usado no arquivo exportado.")
         lista_musicas = ["Automático"] + df_limpo['title'].tolist()
-        musica_inicial = st.selectbox("Música Inicial", options=lista_musicas)
+        musica_inicial = st.selectbox("Música de abertura", options=lista_musicas, placeholder="Escolha a música de abertura", help="Use a biblioteca para copiar a música desejada ou deixe em 'Automático'")
         tamanho_set = st.slider("Tamanho do Set (número de músicas)", min_value=5, max_value=100, value=20, step=1, width=340)
         curva_str = st.text_input("Curva de 'Vibe'", value="up-mid-down-up")
         
@@ -150,7 +150,7 @@ if st.session_state.df_set_gerado is not None and not st.session_state.df_set_ge
 
 elif st.session_state.biblioteca_limpa is not None:
     # Este é o estado DEPOIS do upload, mas ANTES de gerar o set
-    st.subheader("Sua Biblioteca (Limpa e Formatada)")
+    st.subheader("Biblioteca carregada")
     st.dataframe(st.session_state.biblioteca_limpa[['title', 'artist', 'bpm', 'key']])
 else:
     # Este é o estado inicial, antes de qualquer upload
