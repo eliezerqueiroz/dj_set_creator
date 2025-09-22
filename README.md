@@ -1,4 +1,4 @@
-# 🎧 DJ Set Creator: Da Ciência de Dados à Pista de Dança
+# 🎧 DJ Set Creator: Ciência de Dados na Pista de Dança
 
 [![Python Version](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://djsetcreator.streamlit.app/)
