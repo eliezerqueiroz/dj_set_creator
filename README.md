@@ -1,90 +1,70 @@
+# 🎧 DJ Set Creator: Da Ciência de Dados à Pista de Dança
 
+[![Python Version](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://djsetcreator.streamlit.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# 🎧 DJ Set Creator Inteligente
+Esta aplicação transforma a arte da mixagem em uma ciência precisa, sem perder a alma. O **DJ Set Creator** é uma ferramenta de curadoria musical inteligente que eu construí para resolver um desafio que todo DJ conhece: o bloqueio criativo e as horas gastas para encontrar a sequência perfeita de músicas.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://djsetcreator.streamlit.app)
+Este não é apenas um script; é um produto de dados interativo. **[✨ Experimente a aplicação ao vivo! ✨](https://djsetcreator.streamlit.app/)**
 
-Como Engenheiro de Dados e DJ, sempre me deparei com um desafio: o processo de descobrir e testar combinações de músicas para um novo set era demorado e manual. Eu queria uma forma mais eficiente de explorar minha biblioteca, unindo a precisão da ciência de dados com a arte da mixagem. Foi assim que nasceu o **DJ Set Creator**.
+> Como Engenheiro de Dados e DJ, eu vivia entre dois mundos: a lógica dos algoritmos e a energia da música. Decidi uni-los para transformar um processo manual e demorado em um parceiro criativo inteligente. O resultado é esta ferramenta, que usa dados para sugerir jornadas musicais coesas, permitindo que o artista foque no que realmente importa: a performance.
 
-Esta aplicação é a minha solução: uma ferramenta que analisa uma biblioteca musical a partir de um arquivo CSV e utiliza um algoritmo inteligente para sugerir sets coesos, com transições harmônicas perfeitas e uma jornada de energia planejada.
-
-### ✨ **[Teste a Aplicação Ao Vivo!](https://djsetcreator.streamlit.app)** ✨
-
-![GIF de Demonstração do DJ Set Creator](https://github.com/eliezerqueiroz/dj_set_creator/blob/main/demo.gif?raw=true)
-*(Instrução para você: Grave um GIF curto da aplicação, adicione-o à raiz do seu repositório com o nome `demo.gif` e esta linha irá exibi-lo.)*
-
----
-
-## 🎯 A Visão de um Profissional de Dados
-
-Este projeto foi construído para demonstrar um ciclo completo de desenvolvimento de um produto de dados, da concepção à entrega. Ele evidencia competências essenciais na área de dados:
-
-*   **Engenharia de Dados (ETL):** Construção de um pipeline robusto em Python que ingere dados brutos (CSV), os transforma (limpando nomes de colunas, extraindo chaves Camelot, normalizando BPMs) e os estrutura para análise.
-*   **Engenharia de Features:** A criação da métrica de **"Vibe"**, uma abstração que traduz conceitos musicais (ritmo e harmonia) em um score numérico (0.0 a 1.0), servindo como a fundação para o algoritmo.
-*   **Design de Algoritmos:** Desenvolvimento de um algoritmo de recomendação que não apenas busca compatibilidade local, mas segue uma estratégia global (a "Curva de Vibe") para construir uma jornada musical coesa.
-*   **Visualização de Dados Interativa:** Uso de Plotly para transformar a saída do algoritmo em insights visuais e acionáveis, permitindo que o usuário "veja" a energia do seu set.
-*   **Desenvolvimento de Aplicação Web:** Empacotamento de toda a lógica de dados em uma aplicação interativa e amigável, utilizando Streamlit para uma prototipagem e entrega ágil.
+![Demonstração do DJ Set Creator](https://github.com/eliezerqueiroz/dj_set_creator/blob/main/demo.gif?raw=true)
 
 ---
 
-## 🚀 Como Criar seu Set com o DJ Set Creator
+## ✨ Core Features
 
-### 1. 🆙 Faça o Upload da sua Biblioteca
-Na barra lateral, carregue sua biblioteca de músicas em formato `.csv`. O sistema é compatível com exportações de softwares de DJ populares como o **Mixxx**.
+*   **🎼 Análise Inteligente de Biblioteca:** Faça o upload de um `.csv` da sua biblioteca musical (compatível com Mixxx, Rekordbox, etc.) e a aplicação extrai e limpa automaticamente os metadados essenciais: BPM, tonalidade (chave Camelot), artista e título.
 
-### 2. ⚙️ Configure sua Jornada Musical
-No "Painel de Controles", você define a "alma" do seu set:
+*   **📈 Design de Jornada com a "Vibe Curve":** O coração da ferramenta. A métrica de "Vibe" (0.0 a 1.0) que desenvolvi traduz ritmo e harmonia em um score de energia. Você pode ditar a narrativa do seu set com comandos simples como `down-up-up` (aquecimento, pico, pico) ou `up-down-mid` (abertura forte, um respiro, e finalização controlada).
 
-*   #### **A Curva de 'Vibe'**
-    A "Vibe" é uma métrica que criei para quantificar a energia de uma música, combinando seu ritmo (BPM) e seu humor harmônico (tonalidade Maior/Menor). No campo **Curva de 'Vibe'**, você pode desenhar a jornada de energia do seu set. Por exemplo:
-    *   `mid-up-up`: Começa com energia média e constrói para um pico longo.
-    *   `up-down-up`: Um set com um momento de respiro no meio.
+*   **🎛️ Você no Controle do Algoritmo:** Ajuste os pesos do sistema de recomendação para priorizar o que é mais importante para o seu estilo de mixagem:
+    *   **BPM Sync:** Foco em transições rítmicas perfeitas.
+    *   **Mixagem Harmônica:** Foco em transições musicalmente impecáveis.
 
-### 3. 🎛️ Ajuste as Regras de Seleção
-Tenha controle fino sobre como o algoritmo pensa:
-
-*   **Ajuste de Pesos (BPM vs. Chave):** O coração do algoritmo! Use o slider para dizer ao sistema o que é mais importante para você:
-    *   **Foco em Ritmo (BPM Sync):** Prioriza transições com BPMs quase idênticos, ideal para mixagens suaves e longas.
-    *   **Foco em Harmonia (Mixagem Harmônica):** Prioriza a compatibilidade de chave (Camelot Wheel), criando transições musicalmente perfeitas.
-
-### 4. ▶️ Gere, Analise e Exporte!
-Clique em **"▶️ Criar DJ Set!"**. A aplicação irá exibir:
-
-*   #### **Análise Visual e Exportação**
-    *   **Gráfico da Curva de Vibe:** Visualize a jornada de energia do set. **Você pode baixar uma imagem PNG do gráfico** usando o ícone de câmera na barra de ferramentas do gráfico.
-    *   **Download do Set (CSV):** Na barra lateral, o botão de download estará habilitado. Ele gera um `.csv` formatado para ser **importado diretamente no Mixxx**. A coluna **"Comentário"** no Mixxx virá preenchida com o efeito de transição que o algoritmo planejou para cada música!
-
-**Importante:** Lembre-se, o DJ Set Creator é uma **ferramenta de sugestão para potencializar sua criatividade**. O resultado final sempre dependerá das suas decisões como artista. Use as sugestões como um ponto de partida para explorar novas combinações e aperfeiçoar sua arte.
+*   **🚀 Visualização e Exportação Prontas para o Palco:** Gere seu set e obtenha insights imediatos com um gráfico interativo da Curva de Vibe. Com um clique, baixe um `.csv` pronto para ser importado de volta no seu software de DJ, com a coluna de comentários já preenchida com as sugestões de transição!
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🎯 Por que Este Projeto Importa (Para Líderes Técnicos e Recrutadores)
 
-*   **Backend & Análise de Dados:** Python, Pandas, NumPy
-*   **Interface Web:** Streamlit
-*   **Visualização de Dados:** Plotly
-*   **Versionamento:** Git & GitHub
+Este projeto foi desenhado para ser um case completo, demonstrando competência em todo o ciclo de vida de um produto de dados:
+
+*   **Pensamento de Produto (End-to-End):** Fui da identificação de uma dor de usuário real à entrega de uma solução web funcional e com valor tangível.
+*   **Engenharia de Dados (ETL):** Implementei um pipeline em Python/Pandas para ingestão, limpeza, transformação e estruturação de dados brutos.
+*   **Ciência de Dados Aplicada:** Criei features (`Vibe score`), desenvolvi um algoritmo de recomendação ponderado e modelei um sistema que traduz um objetivo estratégico (`Curva de Vibe`) em resultados táticos (a playlist final).
+*   **BI & Visualização de Dados:** Utilizei Plotly para criar uma visualização de dados interativa que não apenas mostra dados, mas gera insights acionáveis para o usuário.
+*   **Desenvolvimento e Deploy:** Empacotei a lógica complexa em uma aplicação user-friendly com Streamlit e realizei o deploy na nuvem, tornando-a acessível a todos.
 
 ---
 
-## 🛣️ Roadmap: O Futuro do Projeto
+## 🛠️ Tech Stack
 
-Este projeto é uma plataforma para inovação contínua. As próximas metas estão focadas em dar ainda mais controle criativo ao DJ e em usar IA para ir além da seleção de músicas, sugerindo técnicas de mixagem.
+| Área                  | Tecnologias                                    |
+| --------------------- | ---------------------------------------------- |
+| **Backend & Análise** | `Python`, `Pandas`, `NumPy`                    |
+| **Interface Web**     | `Streamlit`                                    |
+| **Visualização**      | `Plotly`                                       |
+| **Versionamento & CI/CD** | `Git`, `GitHub` |
 
-*   **Meta 1: O "Solucionador de Transições" Interativo**
-    *   **Feature:** Uma nova interface de "construção manual", onde o DJ seleciona a primeira música e, a cada passo, o sistema apresenta um ranking das melhores próximas faixas. O DJ pode então escolher a próxima música, ver o impacto na curva de vibe em tempo real, e continuar construindo o set, música por música.
-    *   **Valor para o DJ:** Combina a inteligência do algoritmo com o controle total do artista. Permite a criação de sets mais personalizados e a exploração de diferentes caminhos de energia de forma interativa.
+---
 
-*   **Meta 2: Exportação Multi-Plataforma**
-    *   **Feature:** Expandir a funcionalidade de exportação para garantir compatibilidade total com os principais softwares de DJ do mercado.
-    *   **Implementação:** Adicionar suporte para os formatos de playlist `.xml` (usado pelo **Rekordbox** e **Traktor**) e `.m3u8` (um padrão universal compatível com o **Serato** e outros).
-    *   **Valor para o DJ:** Torna a ferramenta universalmente útil, independentemente do equipamento ou software que o DJ utiliza.
+## 🛣️ Roadmap: O Futuro é Colaborativo e Inteligente
 
-## 👨‍💻 Sobre o Autor
+Este projeto é uma fundação. A visão é expandi-lo para se tornar um verdadeiro "copiloto" para DJs.
 
-Olá! Sou **Eliezer Queiroz**, um Engenheiro de Dados com uma profunda paixão por música e discotecagem. Este projeto é a intersecção dos meus dois mundos, criado para resolver um desafio que eu mesmo enfrentava.
+-   **[  ] Modo "Copiloto" Interativo:** Uma interface onde o DJ constrói o set música por música, recebendo um ranking das melhores próximas faixas em tempo real e visualizando o impacto de cada escolha na Curva de Vibe.
+-   **[  ] Exportação Multi-Plataforma:** Adicionar suporte nativo para formatos de playlist do **Rekordbox**, **Traktor** e **Serato** (`.xml`, `.m3u8`).
 
-Estou sempre aberto a novas conexões, feedback e oportunidades.
+---
 
-*   **[LinkedIn](https://www.linkedin.com/in/eliezerqueiroz/)**
-*   **[GitHub](https://github.com/eliezerqueiroz)**
+## 👨‍💻 Vamos nos Conectar!
+
+Olá, sou **Eliezer Queiroz**, um Engenheiro de Dados apaixonado por construir soluções que vivem na intersecção entre a tecnologia e a criatividade.
+
+Se você se interessou por este projeto, tem feedback, ou quer discutir oportunidades, adoraria conversar.
+
+*   🔗 **Encontre-me no [LinkedIn](https://www.linkedin.com/in/eliezerqueiroz/)**
+*   ⭐ **Explore meus outros projetos no [GitHub](https://github.com/eliezerqueiroz)**
