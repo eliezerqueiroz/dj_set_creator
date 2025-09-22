@@ -26,6 +26,8 @@ Este não é apenas um script; é um produto de dados interativo. **[✨ Experim
 
 *   **🚀 Visualização e Exportação Prontas para o Palco:** Gere seu set e obtenha insights imediatos com um gráfico interativo da Curva de Vibe. Com um clique, baixe um `.csv` pronto para ser importado de volta no seu software de DJ, com a coluna de comentários já preenchida com as sugestões de transição!
 
+![Demonstração do DJ Set Creator](https://github.com/eliezerqueiroz/dj_set_creator/blob/main/demo2.gif)
+
 ---
 
 ## 🎯 Por que Este Projeto Importa (Para Líderes Técnicos e Recrutadores)
