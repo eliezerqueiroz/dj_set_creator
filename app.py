@@ -30,9 +30,9 @@ if 'csv_para_download' not in st.session_state:
 
 # --- CABEÇALHO PRINCIPAL ---
 st.title("🎧 DJ Set Creator")
-st.markdown("1. ⏪️ Acesse o Painel de Controles na barra lateral")
-st.markdown("2. 🆙 Faça upload das suas musicas")
-st.markdown("3. Configure e crie um DJ SET, com o poder da `Ciência de dados` 🦾🎲")
+# st.markdown("1. ⏪️ Acesse o Painel de Controles na barra lateral")
+# st.markdown("2. 🆙 Faça upload das suas musicas")
+# st.markdown("3. Configure e crie um DJ SET, com o poder da `Ciência de dados` 🦾🎲")
 
 # ==============================================================================
 # SEÇÃO 1: SIDEBAR - Onde todos os inputs e ações do usuário acontecem
@@ -43,7 +43,7 @@ with st.sidebar:
         try:
             with st.spinner('Carregando músicas de exemplo...'):
                 # Lê o CSV local
-                df_exemplo = pd.read_csv("sample_library.csv") 
+                df_exemplo = pd.read_csv("assets/sample_library.csv") 
                 # Processa com a mesma função de limpeza
                 st.session_state.biblioteca_limpa = adaptar_csv_biblioteca(df_exemplo)
                 # Reseta qualquer estado antigo
@@ -59,13 +59,14 @@ with st.sidebar:
         use_container_width=True,
         help="Teste o DJ Set Creator"
     )
-    
+    uploaded_file = st.file_uploader(
+        label="Carregue aqui sua playlist em formato .csv", 
+        type=["csv"]
+    )    
+
     st.title("⚙️ Painel de Controles do Set")
     st.subheader("1. Use seu software DJ favorito para exportar suas músicas como .CSV")
-    uploaded_file = st.file_uploader(
-        label="Carregue aqui seu seu arquivo .csv", 
-        type=["csv"]
-    )
+
 
     # Processamento do arquivo de upload
     if uploaded_file is not None:
@@ -147,6 +148,17 @@ with st.sidebar:
            help="Crie um set para habilitar o download."
         )
 
+    st.markdown("---")
+    st.markdown("Desenvolvido com :brain: por :rainbow[Eliezer Queiroz]")
+    footer_html = """
+        <div style="text-align: center; margin-top: 20px;">
+            <p style="color: #888; font-size: 0.9em;">
+                <a href="https://github.com/eliezerqueiroz/dj_set_creator" target="_blank">GitHub</a> | 
+                <a href="https://www.linkedin.com/in/eliezerqueiroz/" target="_blank">LinkedIn</a>
+            </p>
+        </div>
+        """
+    st.markdown(footer_html, unsafe_allow_html=True)
 # ==============================================================================
 # SEÇÃO 3: ÁREA PRINCIPAL - Apenas exibe os resultados com base no estado
 # ==============================================================================
@@ -174,5 +186,32 @@ elif st.session_state.biblioteca_limpa is not None:
     st.subheader("Biblioteca carregada")
     st.dataframe(st.session_state.biblioteca_limpa[['title', 'artist', 'bpm', 'key']])
 else:
-    # Este é o estado inicial, antes de qualquer upload
-    st.info("Aguardando o upload do seu arquivo CSV na barra lateral para começar.")
+# --- TELA 1: TELA DE APRESENTAÇÃO E TUTORIAL ---
+    st.subheader("Bem-vindo ao DJ Set Creator!")
+    st.write("Use a Ciência de dados para montar sets 100% harmonicos:")
+
+    col1, col2= st.columns(2, border=True)
+
+    with col1:
+        st.markdown("<h4 style='text-align: center;'>1. Carregue suas músicas</h4>", unsafe_allow_html=True)
+        st.image("assets/step1.gif", caption="1. Carregue suas músicas ou use os dados de exemplo")
+        st.warning("Use seu software DJ favorito para exportar uma playlist como **.CSV**"
+        "\n\nOu use o botão no topo da barra lateral para carregar os dados de exemplo.") 
+        
+    with col2:
+        st.markdown("<h4 style='text-align: center;'>2. Configure e crie seu Set</h4>", unsafe_allow_html=True)
+        st.image("assets/step2.gif", caption="2. use o painel lateral para configurar o set")
+        st.info("Após configurar os parâmetros, clique em **'Criar DJ Set!'**. O algoritmo analisará milhares de combinações para encontrar uma sequência 100% harmônica que segue a sua curva de vibe.")
+        st.success("Você verá um gráfico interativo da jornada de energia e a playlist detalhada.")
+    col3, col4, col5 = st.columns([1,2,1])
+    # col4_container = st.container( border=True, horizontal=True, horizontal_alignment="center")
+
+    col4_container = col4.container(border=True)
+
+
+    with col4_container:
+        st.markdown("<h4 style='text-align: center;'>3. Analise a curva de <em>Vibe,</em> baixe e toque um set 100% harmônico</h4>", unsafe_allow_html=True)
+        st.image("assets/step3.gif" , caption="3. A Vibe se baseia em BPM e Key e o peso dessas variáveis são ajustáveis no painel de controle")
+        st.info("A 'Vibe' é uma métrica de 0 a 1 que calcula a energia de uma música combinando seu ritmo (BPM) e seu humor (Nota ou Key).")
+        st.code("Exemplo: 'mid-up-up-down'", language="text")
+        st.success("Isso cria um set que começa com energia média, sobe para um pico longo e depois relaxa no final.")

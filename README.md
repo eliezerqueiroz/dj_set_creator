@@ -10,7 +10,7 @@ Este não é apenas um script; é um produto de dados interativo. **[✨ Experim
 
 > Como Engenheiro de Dados e DJ, eu vivia entre dois mundos: a lógica dos algoritmos e a energia da música. Decidi uni-los para transformar um processo manual e demorado em um parceiro criativo inteligente. O resultado é esta ferramenta, que usa dados para sugerir jornadas musicais coesas, permitindo que o artista foque no que realmente importa: a performance.
 
-![Demonstração do DJ Set Creator](https://github.com/eliezerqueiroz/dj_set_creator/blob/main/demo.gif?raw=true)
+![Demonstração do DJ Set Creator](https://github.com/eliezerqueiroz/dj_set_creator/blob/main/assets/step2.gif?raw=true)
 
 ---
 
@@ -26,7 +26,7 @@ Este não é apenas um script; é um produto de dados interativo. **[✨ Experim
 
 *   **🚀 Visualização e Exportação Prontas para o Palco:** Gere seu set e obtenha insights imediatos com um gráfico interativo da Curva de Vibe. Com um clique, baixe um `.csv` pronto para ser importado de volta no seu software de DJ, com a coluna de comentários já preenchida com as sugestões de transição!
 
-![Demonstração do DJ Set Creator](https://github.com/eliezerqueiroz/dj_set_creator/blob/main/demo2.gif)
+![Demonstração do DJ Set Creator](https://github.com/eliezerqueiroz/dj_set_creator/blob/main/assets/step3.gif)
 
 ---
 
