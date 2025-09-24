@@ -43,7 +43,7 @@ with st.sidebar:
         try:
             with st.spinner('Carregando músicas de exemplo...'):
                 # Lê o CSV local
-                df_exemplo = pd.read_csv("assets/sample_library.csv") 
+                df_exemplo = pd.read_csv("https://github.com/eliezerqueiroz/dj_set_creator/blob/main/assets/sample_library.csv") 
                 # Processa com a mesma função de limpeza
                 st.session_state.biblioteca_limpa = adaptar_csv_biblioteca(df_exemplo)
                 # Reseta qualquer estado antigo
