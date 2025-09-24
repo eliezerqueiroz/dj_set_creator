@@ -157,7 +157,7 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("Desenvolvido com :brain: por :rainbow[Eliezer Queiroz]")
     footer_html = """
-        <div style="text-align: center; margin-top: 20px;">
+        <div>
             <p style="color: #888; font-size: 0.9em;">
                 <a href="https://github.com/eliezerqueiroz/dj_set_creator" target="_blank">GitHub</a> | 
                 <a href="https://www.linkedin.com/in/eliezerqueiroz/" target="_blank">LinkedIn</a>
