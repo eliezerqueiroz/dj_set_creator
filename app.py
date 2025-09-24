@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
+import os
 from utils import (
     adaptar_csv_biblioteca,
     criar_dj_set,
@@ -43,7 +44,12 @@ with st.sidebar:
         try:
             with st.spinner('Carregando músicas de exemplo...'):
                 # Lê o CSV local
-                df_exemplo = pd.read_csv("https://github.com/eliezerqueiroz/dj_set_creator/blob/main/assets/sample_library.csv") 
+                # 2. Constrói o caminho para o arquivo de forma robusta
+                # __file__ é uma variável especial que contém o caminho do script atual (app.py)
+                caminho_script = os.path.dirname(__file__)
+                # os.path.join junta os pedaços do caminho com a barra correta para o sistema
+                caminho_csv_exemplo = os.path.join(caminho_script, "assets", "sample_library.csv")
+                df_exemplo = pd.read_csv(caminho_csv_exemplo) 
                 # Processa com a mesma função de limpeza
                 st.session_state.biblioteca_limpa = adaptar_csv_biblioteca(df_exemplo)
                 # Reseta qualquer estado antigo
