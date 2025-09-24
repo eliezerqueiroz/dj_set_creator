@@ -38,9 +38,30 @@ st.markdown("3. Configure e crie um DJ SET, com o poder da `Ciência de dados` �
 # SEÇÃO 1: SIDEBAR - Onde todos os inputs e ações do usuário acontecem
 # ==============================================================================
 with st.sidebar:
-    st.title("⚙️ Painel de Controles do Set")
-    st.subheader("1. Use seu software DJ favorito para exportar sua biblioteca ou playlist como .CSV")
+    # Callback para carregar os dados de exemplo
+    def carregar_dados_exemplo():
+        try:
+            with st.spinner('Carregando músicas de exemplo...'):
+                # Lê o CSV local
+                df_exemplo = pd.read_csv("sample_library.csv") 
+                # Processa com a mesma função de limpeza
+                st.session_state.biblioteca_limpa = adaptar_csv_biblioteca(df_exemplo)
+                # Reseta qualquer estado antigo
+                st.session_state.df_set_gerado = None
+                st.session_state.csv_para_download = ""
+        except Exception as e:
+            st.error(f"Erro ao carregar arquivo de exemplo: {e}")
+            st.session_state.biblioteca_limpa = None
+
+    st.sidebar.button(
+        "🧪 Carregar músicas de Exemplo", 
+        on_click=carregar_dados_exemplo, # Usa a abordagem de callback
+        use_container_width=True,
+        help="Teste o DJ Set Creator"
+    )
     
+    st.title("⚙️ Painel de Controles do Set")
+    st.subheader("1. Use seu software DJ favorito para exportar suas músicas como .CSV")
     uploaded_file = st.file_uploader(
         label="Carregue aqui seu seu arquivo .csv", 
         type=["csv"]
