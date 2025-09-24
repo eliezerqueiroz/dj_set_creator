@@ -11,5 +11,4 @@ __pycache__/
 .idea/
 
 # Arquivos de dados locais e segredos
-*.csv
 .env
