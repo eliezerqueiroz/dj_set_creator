@@ -29,16 +29,24 @@ def adaptar_csv_biblioteca(df_original):
 
     # 2. MAPEAMENTO FLEXÍVEL
     # Agora o mapeamento usa nomes em minúsculas
+    chave_col = None
+    for nome in ['nota', 'tom', 'key']:
+        if nome in df.columns:
+            chave_col = nome
+            break
+    if not chave_col:
+        raise KeyError("Nenhuma coluna de chave encontrada. Esperado: 'nota', 'tom' ou 'key'.")
+
     mapeamento_colunas = {
-        'título': 'title', # "Título" se torna "título"
+        'título': 'title',
         'artista': 'artist',
         'bpm': 'bpm',
-        'nota': 'key',
-        'localização': 'localização'  # Adiciona a coluna de localização para ser possível importar de voltar no MIXXX
+        chave_col: 'key',
+        'localização': 'localização'
     }
     df.rename(columns=mapeamento_colunas, inplace=True)
     # --- FIM DA CORREÇÃO ---
-
+    
     # 3. Seleção de colunas (lógica inalterada, mas agora funciona)
     colunas_desejadas = ['title', 'artist', 'bpm', 'key', 'localização']
     colunas_para_manter = [col for col in colunas_desejadas if col in df.columns]
@@ -53,7 +61,12 @@ def adaptar_csv_biblioteca(df_original):
     # Usamos a função `extrair_chave_camelot` para transformar a coluna 'key'.
     if 'key' in df.columns:
         print("Formatando a coluna 'key' usando a função 'extrair_chave_camelot'...")
-        df['key'] = df['key'].str.upper().str.extract(r'(\d{1,2}[AB])')
+        try:
+            df['key'] = df['key'].str.upper().str.extract(r'(\d{1,2}[AB])')
+        except Exception as e:
+            print(f"Erro ao formatar a coluna 'key': {e}")
+            print("converta o formato da Key para o formato Camelot (ex: 8A, 12B) e tente novamente.")
+            df['key'] = None
     # Converter BPM para numérico
     if 'bpm' in df.columns:
         print("Convertendo a coluna 'bpm' para tipo numérico e formatando...")
